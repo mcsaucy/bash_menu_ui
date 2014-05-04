@@ -59,10 +59,8 @@ FOOT(){ MARK;end_foot=$(( $LM + 4 + $TOP_LANE )) ; TPUT $end_foot 4
   }
 ARROW(){ 
   while true;  do
-    OLD_IFS="$IFS"
+
     read -s -n1 key 2>/dev/null >&2
-    IFS="$OLD_IFS"
-    
     if [[ ( $key = 's'  || $key = ' ' ) && "$IS_MULTI_SELECT" != "false" ]] ; then
       echo select; break; 
       #L_C=$(( $CURRENT_LANE + $i )) ; ${M_SELECTED[$L_C]} = true  ; INITN; 
@@ -72,7 +70,6 @@ ARROW(){
     if [[ $key = '' ]] ; then break; fi
     if test "$key" != "$ESC" ; then continue; fi
     read -s -n2 key2 2>/dev/null >&2
-    IFS="$OLD_IFS"
     
     if [[ $key2 = "[A" ]];then echo up; break; fi;
     if [[ $key2 = "[B" ]];then echo dn; break; fi;
