@@ -24,12 +24,12 @@ ESC=$( $e "\033")
 TPUT(){ $e "\033[${1};${2}H";}
 CLEAR(){ $e "\033c";}
 CIVIS(){ $e "\033[?25l";}
-DRAW(){ $e "\033%@\033(0";}
+DRAW(){ $e "\033%\033(0";}
 WRITE(){ $e "\033(B";}
 MARK(){ $e "\033[7m";}
 UNMARK(){ $e "\033[27m";}
-#BLUE(){ $e "\033c\033[H\033[J\033[37;44m\033[J";};BLUE
-BLUE(){ $e ; };BLUE
+BLUE(){ $e "\033c\033[H\033[J\033[37;44m\033[J";};BLUE
+#BLUE(){ $e ; };BLUE
 C(){ CLEAR;BLUE;}
 HEAD(){ 
     TOTAL_BORDER=$(( $LM + 4 ))
@@ -59,17 +59,23 @@ FOOT(){ MARK;end_foot=$(( $LM + 4 + $TOP_LANE )) ; TPUT $end_foot 4
   }
 ARROW(){ 
   while true;  do
+    OLD_IFS="$IFS"
     read -s -n1 key 2>/dev/null >&2
-    if [[ $key = 's' && "$IS_MULTI_SELECT" != "false" ]] ; then
+    IFS="$OLD_IFS"
+    
+    if [[ ( $key = 's'  || $key = ' ' ) && "$IS_MULTI_SELECT" != "false" ]] ; then
       echo select; break; 
       #L_C=$(( $CURRENT_LANE + $i )) ; ${M_SELECTED[$L_C]} = true  ; INITN; 
       continue;
     fi
+    
     if [[ $key = '' ]] ; then break; fi
     if test "$key" != "$ESC" ; then continue; fi
     read -s -n2 key2 2>/dev/null >&2
-      if [[ $key2 = [A ]];then echo up; break; fi
-      if [[ $key2 = [B ]];then echo dn; break; fi;
+    IFS="$OLD_IFS"
+    
+    if [[ $key2 = "[A" ]];then echo up; break; fi;
+    if [[ $key2 = "[B" ]];then echo dn; break; fi;
   done
   }
 POSITION(){ 
@@ -84,12 +90,15 @@ POSITION(){
      return 0
   fi
   if [[ $cur = up ]];then ((i--));fi
-    if [[ $cur = dn ]];then ((i++));fi
+  if [[ $cur = dn ]];then ((i++));fi
+  
   if [[ i -lt 0 ]]; then ((CURRENT_LANE--)); INITN;fi
   if [[ i -gt LM ]]; then ((CURRENT_LANE++));INITN;fi
-    if [[ i -lt 0 && CURRENT_LANE -lt 0  ]];then i=$LM; CURRENT_LANE=$(( $TOTAL_LINES - $LM )); INITN;fi
+  
+  if [[ i -lt 0 && CURRENT_LANE -lt 0  ]];then i=$LM; CURRENT_LANE=$(( $TOTAL_LINES - $LM )); INITN;fi
   VIEW_REGION=$(( $CURRENT_LANE + $SHOW_LINES ))
-    if [[ i -gt LM && VIEW_REGION -gt TOTAL_LINES ]];then i=0; CURRENT_LANE=0 ; INITN;fi;
+  
+  if [[ i -gt LM && VIEW_REGION -gt TOTAL_LINES ]];then i=0; CURRENT_LANE=0 ; INITN;fi;
   if [[ i -gt LM ]] ; then i=$LM;INITN ; fi;
   if [[ i -lt 0 ]] ; then i=0;INITN; fi;
   #if test "$IS_DEBUG" = "yes" ; then 
@@ -205,36 +214,8 @@ show_menu_quit() {
   adjust_show_region
     INITN
     while [[ "$O" != " " ]] ; do
-        S="MN $i" ; SC; if [[ $cur = "" ]]; then C; TPUT 1 1 ; ret_l=$(( $CURRENT_LANE + $i )); if [[ "$ret_l" = "$TOTAL_LINES" ]] ; then exit 0; fi; collect_multi_select_index ; return $ret_l;fi
+        S="MN $i" ; SC; if [[ $cur = "" ]]; then C; TPUT 1 1 ; ret_l=$(( $CURRENT_LANE + $i )); if [[ "$ret_l" = "$TOTAL_LINES" ]] ; then reset; exit 0; fi; collect_multi_select_index ; return $ret_l;fi
         POSITION
     done
 }
-
-
-TOP_LANE=2
-MENU_OPTIONS=(1 2 3)
-TITLE="Select backup file to restore:"
-show_menu
-echo "selection: $?"
-MENU_OPTIONS=(1 2)
-TITLE="none selection"
-show_menu
-echo "selection: $?"
-MENU_OPTIONS=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 )
-TITLE="multiple selection"
-show_menu
-echo "selection: $?"
-
-IS_TITLE_SHOWN_TOTAL_NUM=true
-IS_MULTI_SELECT=false
-MENU_OPTIONS=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 )
-TITLE="with quit test"
-show_menu_quit
-echo "selection: $?"
-
-IS_MULTI_SELECT=true
-MENU_OPTIONS=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 )
-TITLE="multiple selection"
-show_menu_quit
-echo "selection: $? multi selected: ${M_SELECTED_INDEX[@]}, all: ${M_SELECTED[@]}"
 
