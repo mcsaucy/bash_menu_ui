@@ -33,3 +33,4 @@ TITLE="multiple selection"
 show_menu_quit
 echo "selection: $? multi selected: ${M_SELECTED_INDEX[@]}, all: ${M_SELECTED[@]}"
 
+reset
