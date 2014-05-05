@@ -28,9 +28,9 @@ DRAW(){ $e "\033%\033(0";}
 WRITE(){ $e "\033(B";}
 MARK(){ $e "\033[7m";}
 UNMARK(){ $e "\033[27m";}
-BLUE(){ $e "\033c\033[H\033[J\033[37;44m\033[J";};BLUE
-#BLUE(){ $e ; };BLUE
-C(){ CLEAR;BLUE;}
+#BG(){ $e "\033c\033[H\033[J\033[37;44m\033[J";};BG
+BG(){ $e ; };BG
+C(){ CLEAR;BG;}
 HEAD(){ 
     TOTAL_BORDER=$(( $LM + 4 ))
   if test "$IS_DEBUG" = "yes" ; then 
@@ -145,7 +145,7 @@ MENUN(){
         N_L=$(( $N_L + 1 ))
     done
 }
-INITN(){ BLUE;HEAD;FOOT;MENUN;}
+INITN(){ BG;HEAD;FOOT;MENUN;}
 SC(){ REFRESH;MARK;$S;cur=`ARROW`;}
 ESN(){ MARK;$e "\nENTER = main menu ";$b;read;INITN;}
 COUNT_LM() {
