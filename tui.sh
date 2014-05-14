@@ -207,7 +207,7 @@ show_menu_quit() {
   MAX_LINES=`tput lines`
     COUNT_LM
     LM=$(( $LM + 1 ))
-    MENU_OPTIONS[$LM]="exit"
+    MENU_OPTIONS[$LM]="Exit"
   adjust_show_region
     INITN
     while [[ "$O" != " " ]] ; do
