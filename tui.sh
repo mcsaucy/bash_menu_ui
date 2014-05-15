@@ -211,7 +211,7 @@ show_menu_quit() {
   adjust_show_region
     INITN
     while [[ "$O" != " " ]] ; do
-        S="MN $i" ; SC; if [[ $cur = "" ]]; then C; TPUT 1 1 ; ret_l=$(( $CURRENT_LANE + $i )); if [[ "$ret_l" = "$TOTAL_LINES" ]] ; then reset; exit 0; fi; collect_multi_select_index ; return $ret_l;fi
+        S="MN $i" ; SC; if [[ $cur = "" ]]; then C; TPUT 1 1 ; ret_l=$(( $CURRENT_LANE + $i )); if [[ "$ret_l" = "$TOTAL_LINES" ]] ; then return -1; fi; collect_multi_select_index ; return $ret_l;fi
         POSITION
     done
 }
