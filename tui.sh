@@ -19,7 +19,7 @@ IS_TITLE_SHOWN_TOTAL_NUM=false
 
 
 #### modified based on http://top-scripts.blogspot.com/2011/01/blog-post.html
-E='echo -e';e='echo -en';trap "R;exit" 2
+E='echo -e';e='echo -en';trap "reset;exit 1" 2
 ESC=$( $e "\033")
 TPUT(){ $e "\033[${1};${2}H";}
 CLEAR(){ $e "\033c";}
